@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
     "lint": "eslint .",
-    "test": "cross-env NODE_ENV=test tape -r babel-register tests/**/*.spec.js | tap-spec",
+    "test": "cross-env NODE_ENV=test tape -r @babel/register tests/**/*.spec.js | tap-spec",
     "ci": "npm run lint && npm run test",
     "prepublishOnly": "npm run build"
   },
