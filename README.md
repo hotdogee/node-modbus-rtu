@@ -13,10 +13,7 @@ This library implement ONLY **ModbusRTU Master** and only most important feature
 Coil functions (readCoils, writeCoils) is not implemented yet. But you can fork and add this.
 
 ## Minimal requirements
-NodeJS >=5
-
-if you have older NodeJS version, you should install `modbus-rtu@0.1.*` version 
-or update NodeJS (the 8.0 version is out, how long you will be use legacy builds? :) )
+NodeJS >=11
 
 ## Installation
 git clone and build
