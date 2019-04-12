@@ -1,34 +1,34 @@
-import BufferPut from 'bufferput';
-import Promise from 'bluebird';
-import { SerialHelperFactory } from './serial-helper';
-import { Logger } from './logger';
+import BufferPut from 'bufferput'
+import Promise from 'bluebird'
+import { SerialHelperFactory } from './serial-helper'
+import { Logger } from './logger'
 
 import {
-    FUNCTION_CODES,
-    RESPONSE_TIMEOUT,
-    QUEUE_TIMEOUT,
-    DEFAULT_RETRY_COUNT,
-} from './constants';
+  FUNCTION_CODES,
+  RESPONSE_TIMEOUT,
+  QUEUE_TIMEOUT,
+  DEFAULT_RETRY_COUNT
+} from './constants'
 
-import { ModbusRetryLimitExceed, ModbusCrcError } from './errors';
-import * as packetUtils from './packet-utils';
+import { ModbusRetryLimitExceed, ModbusCrcError } from './errors'
+import * as packetUtils from './packet-utils'
 
 export class ModbusMaster {
-    constructor(serialPort, options) {
-        serialPort.on('error', (err) => {
-            console.error(err);
-        });
+  constructor (serialPort, options) {
+    serialPort.on('error', (err) => {
+      console.error(err)
+    })
 
-        this._options = Object.assign({}, {
-            responseTimeout: RESPONSE_TIMEOUT,
-            queueTimeout: QUEUE_TIMEOUT,
-        }, options || {});
+    this._options = Object.assign({}, {
+      responseTimeout: RESPONSE_TIMEOUT,
+      queueTimeout: QUEUE_TIMEOUT
+    }, options || {})
 
-        this.logger = new Logger(this._options);
-        this.serial = SerialHelperFactory.create(serialPort, this._options);
-    }
+    this.logger = new Logger(this._options)
+    this.serial = SerialHelperFactory.create(serialPort, this._options)
+  }
 
-    /**
+  /**
      * Modbus function read holding registers
      * @param {number} slave
      * @param {number} start
@@ -36,70 +36,70 @@ export class ModbusMaster {
      * @param {number | function} [dataType] value from DATA_TYPES const or callback
      * @returns {Promise<number[]>}
      */
-    readHoldingRegisters(slave, start, length, dataType) {
-        const packet = this.createFixedPacket(slave, FUNCTION_CODES.READ_HOLDING_REGISTERS, start, length);
+  readHoldingRegisters (slave, start, length, dataType) {
+    const packet = this.createFixedPacket(slave, FUNCTION_CODES.READ_HOLDING_REGISTERS, start, length)
 
-        return this.request(packet).then((buffer) => {
-            const buf = packetUtils.getDataBuffer(buffer);
+    return this.request(packet).then((buffer) => {
+      const buf = packetUtils.getDataBuffer(buffer)
 
-            if (typeof (dataType) === 'function') {
-                return dataType(buf);
-            }
+      if (typeof (dataType) === 'function') {
+        return dataType(buf)
+      }
 
-            return packetUtils.parseFc03Packet(buf, dataType);
-        });
-    }
+      return packetUtils.parseFc03Packet(buf, dataType)
+    })
+  }
 
-    /**
+  /**
      *
      * @param {number} slave
      * @param {number} register
      * @param {number} value
      * @param {number} [retryCount]
      */
-    writeSingleRegister(slave, register, value, retryCount) {
-        const packet = this.createFixedPacket(slave, FUNCTION_CODES.WRITE_SINGLE_REGISTER, register, value);
-        retryCount = retryCount || DEFAULT_RETRY_COUNT;
+  writeSingleRegister (slave, register, value, retryCount) {
+    const packet = this.createFixedPacket(slave, FUNCTION_CODES.WRITE_SINGLE_REGISTER, register, value)
+    retryCount = retryCount || DEFAULT_RETRY_COUNT
 
-        const performRequest = (retry) => {
-            return new Promise((resolve, reject) => {
-                const funcName = 'writeSingleRegister: ';
-                const funcId =
+    const performRequest = (retry) => {
+      return new Promise((resolve, reject) => {
+        const funcName = 'writeSingleRegister: '
+        const funcId =
                     `Slave ${slave}; Register: ${register}; Value: ${value};` +
-                    `Retry ${retryCount + 1 - retry} of ${retryCount}`;
+                    `Retry ${retryCount + 1 - retry} of ${retryCount}`
 
-                if (retry <= 0) {
-                    throw new ModbusRetryLimitExceed(funcId);
-                }
+        if (retry <= 0) {
+          throw new ModbusRetryLimitExceed(funcId)
+        }
 
-                this.logger.info(funcName + 'perform request.' + funcId);
+        this.logger.info(funcName + 'perform request.' + funcId)
 
-                this.request(packet)
-                    .then(resolve)
-                    .catch((err) => {
-                        this.logger.info(funcName + err + funcId);
+        this.request(packet)
+          .then(resolve)
+          .catch((err) => {
+            this.logger.info(funcName + err + funcId)
 
-                        return performRequest(--retry)
-                            .then(resolve)
-                            .catch(reject);
-                    });
-            });
-        };
-        return performRequest(retryCount);
+            return performRequest(--retry)
+              .then(resolve)
+              .catch(reject)
+          })
+      })
     }
+    return performRequest(retryCount)
+  }
 
-    /**
+  /**
      *
      * @param {number} slave
      * @param {number} start
      * @param {number[]} array
      */
-    writeMultipleRegisters(slave, start, array) {
-        const packet = this.createVariousPacket(slave, FUNCTION_CODES.WRITE_MULTIPLE_REGISTERS, start, array);
-        return this.request(packet);
-    }
+  writeMultipleRegisters (slave, start, array) {
+    const packet = this.createVariousPacket(slave, FUNCTION_CODES.WRITE_MULTIPLE_REGISTERS, start, array)
+    return this.request(packet)
+  }
 
-    /**
+  /**
      * Create modbus packet with fixed length
      * @private
      * @param {number} slave
@@ -108,16 +108,16 @@ export class ModbusMaster {
      * @param {number} param2
      * @returns {Buffer}
      */
-    createFixedPacket(slave, func, param, param2) {
-        return (new BufferPut())
-            .word8be(slave)
-            .word8be(func)
-            .word16be(param)
-            .word16be(param2)
-            .buffer();
-    }
+  createFixedPacket (slave, func, param, param2) {
+    return (new BufferPut())
+      .word8be(slave)
+      .word8be(func)
+      .word16be(param)
+      .word16be(param2)
+      .buffer()
+  }
 
-    /**
+  /**
      * Create modbus packet with various length
      * @private
      * @param {number} slave
@@ -126,31 +126,31 @@ export class ModbusMaster {
      * @param {number[]} array
      * @returns {Buffer}
      */
-    createVariousPacket(slave, func, start, array) {
-        const buf = (new BufferPut())
-            .word8be(slave)
-            .word8be(func)
-            .word16be(start)
-            .word16be(array.length)
-            .word8be(array.length * 2);
+  createVariousPacket (slave, func, start, array) {
+    const buf = (new BufferPut())
+      .word8be(slave)
+      .word8be(func)
+      .word16be(start)
+      .word16be(array.length)
+      .word8be(array.length * 2)
 
-        array.forEach((value) => buf.word16be(value));
+    array.forEach((value) => buf.word16be(value))
 
-        return buf.buffer();
-    }
+    return buf.buffer()
+  }
 
-    /**
+  /**
      * @private
      * @param {Buffer} buffer
      * @returns {Promise<Buffer>}
      */
-    request(buffer) {
-        return this.serial.write(packetUtils.addCrc(buffer))
-            .then((response) => {
-                if (!packetUtils.checkCrc(response)) {
-                    throw new ModbusCrcError();
-                }
-                return response;
-            });
-    }
+  request (buffer) {
+    return this.serial.write(packetUtils.addCrc(buffer))
+      .then((response) => {
+        if (!packetUtils.checkCrc(response)) {
+          throw new ModbusCrcError()
+        }
+        return response
+      })
+  }
 }

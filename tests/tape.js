@@ -1,10 +1,10 @@
-const test = require('tape');
+const test = require('tape')
 
 if (process.env.NODE_ENV !== 'test') {
-    const tapSpec = require('tap-spec');
-    test.createStream()
-        .pipe(tapSpec())
-        .pipe(process.stdout);
+  const tapSpec = require('tap-spec')
+  test.createStream()
+    .pipe(tapSpec())
+    .pipe(process.stdout)
 }
 
-export default test;
+export default test

@@ -1,11 +1,11 @@
 export class Logger {
-    constructor(options) {
-        this.options = options;
-    }
+  constructor (options) {
+    this.options = options
+  }
 
-    info(string) {
-        if (this.options.debug) {
-            console.log(string);
-        }
+  info (string) {
+    if (this.options.debug) {
+      console.log(string)
     }
+  }
 }
