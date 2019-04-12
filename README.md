@@ -5,6 +5,8 @@ using [node-serialport](https://github.com/voodootikigod/node-serialport) and [B
 ## Implementation notes
 This library implement ONLY **ModbusRTU Master** and only most important features:
  * **03** Read Holding Registers
+ * **04** Read Input Register
+ * **05** Write Single Coil
  * **06** Write Single Register
  * **16** Write Multiple Registers
 
@@ -17,9 +19,18 @@ if you have older NodeJS version, you should install `modbus-rtu@0.1.*` version
 or update NodeJS (the 8.0 version is out, how long you will be use legacy builds? :) )
 
 ## Installation
-The simplest way, install via npm, type to console:
+git clone and build
 
-`npm i modbus-rtu serialport --save`
+```
+git clone https://github.com/hotdogee/node-modbus-rtu.git
+cd node-modbus-rtu
+npm run build
+```
+
+In your project
+```
+const ModbusMaster = require('../path/to/node-modbus-rtu/lib').ModbusMaster;
+```
 
 ## Benefits
 1. **Queue**. This is a killer-feature of this library. Behind the scene it use a simple queue.
