@@ -34,15 +34,15 @@
     "bluebird": "^3.3.0",
     "bufferput": "0.1.x",
     "crc": "3.3.0",
-    "lodash": "^4.3.0"
+    "lodash": "^4.17.11"
   },
   "peerDependencies": {
     "serialport": ">=2"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-register": "^6.24.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "cross-env": "^2.0.0",
     "eslint": "^4.3.0",
     "rimraf": "^2.6.1",
