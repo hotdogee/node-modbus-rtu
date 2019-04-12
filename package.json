@@ -31,23 +31,24 @@
     "node": ">=5"
   },
   "dependencies": {
-    "bluebird": "^3.3.0",
+    "bluebird": "^3.5.4",
     "bufferput": "0.1.x",
-    "crc": "3.3.0",
+    "crc": "^3.8.0",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
     "serialport": ">=2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
-    "cross-env": "^2.0.0",
-    "eslint": "^4.3.0",
-    "rimraf": "^2.6.1",
-    "sinon": "^1.17.5",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.7.0"
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.16.0",
+    "rimraf": "^2.6.3",
+    "sinon": "^7.3.1",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.10.1"
   }
 }
